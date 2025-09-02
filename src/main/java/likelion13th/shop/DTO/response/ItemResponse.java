@@ -1,5 +1,6 @@
 package likelion13th.shop.DTO.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import likelion13th.shop.domain.Item;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,21 +10,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemResponse {
-    private Long itemId;
-    private String itemName;
-    private int itemPrice;
-    private int itemLeft;
-    private String itemImg;
-    private String itemStatus;
+    private Long id;
+    private String name;
+    private int price;
+    private String brand;
+    private String imagePath;
+    private boolean isNew;
 
+    @JsonProperty("isNew")
+    public boolean getIsNew() {
+        return isNew;
+    }
+
+    // Item -> ItemResponseDto 변환
     public static ItemResponse from(Item item) {
         return new ItemResponse(
                 item.getId(),
                 item.getItemName(),
-                item.getItemPrice(),
-                item.getItemLeft(),
-                item.getItemImg(),
-                item.getItemStatus()
+                item.getPrice(),
+                item.getBrand(),
+                item.getImagePath(),
+                item.isNew()
         );
     }
 }

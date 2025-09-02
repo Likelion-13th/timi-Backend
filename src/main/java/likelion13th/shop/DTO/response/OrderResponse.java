@@ -1,6 +1,6 @@
 package likelion13th.shop.DTO.response;
 
-import likelion13th.shop.domain.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import likelion13th.shop.domain.Order;
 import likelion13th.shop.global.constant.OrderStatus;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class OrderResponse {
     private Long orderId;
-    private String userName;
+    private String usernickname;
     private String itemName;
     private int quantity;
     private int totalPrice;
@@ -26,7 +26,7 @@ public class OrderResponse {
     public static OrderResponse from(Order order) {
         return new OrderResponse(
                 order.getId(),
-                order.getUser().getUserName(),
+                order.getUser().getUsernickname(),
                 order.getItem().getItemName(),
                 order.getQuantity(),
                 order.getTotalPrice(),

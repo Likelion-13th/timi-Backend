@@ -8,19 +8,24 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 public class Address {
 
     /** 필드 **/
     @Column(nullable = false)
-    private String postalCode; // 우편번호
+    private String zipcode; // 우편번호
 
     @Column(nullable = false)
     private String address; // 주소
 
-    @Column(nullable = false)
-    private String detailAddress; // 상세주소
+    @Column(name = "address_detail", nullable = false)
+    private String addressDetail; // 상세주소
+
+    public Address() {
+        this.zipcode = "10540";
+        this.address = "경기도 고양시 덕양구 항공대학로 76";
+        this.addressDetail = "한국항공대학교";
+    }
 
 }
 

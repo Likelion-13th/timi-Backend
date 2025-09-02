@@ -2,19 +2,18 @@ package likelion13th.shop.domain;
 
 import jakarta.persistence.*;
 import likelion13th.shop.domain.entity.BaseEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
+import likelion13th.shop.login.auth.jwt.RefreshToken;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "users")
+@Builder // 로그인 관련
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "users")
 public class User extends BaseEntity {
 
     /** 필드 **/
@@ -24,65 +23,63 @@ public class User extends BaseEntity {
     @Setter(AccessLevel.PRIVATE)
     private Long id;
 
+    // 카카오 고유 ID
     @Column(nullable = false, unique = true)
-    private String providerId; // 소셜 로그인 식별자
+    private String providerId;
 
+    // 카카오 닉네임 (중복 허용)
     @Column(nullable = false)
-    private String userName; // 사용자명
+    private String usernickname;
 
-    // (기본값 0, 비즈니스 메서드로만 관리)
+    // 휴대폰 번호 (선택 사항, 기본값 null)
+    @Column(nullable = true)
+    private String phoneNumber;
+
+    // 계정 삭제 가능 여부 (기본값 true)
+    @Column(nullable = false)
+    private boolean deletable = true;
+
+    // 마일리지 (기본값 0, 비즈니스 메서드로만 관리)
     @Column(nullable = false)
     @Setter(AccessLevel.NONE)
-    private int maxMileage = 0; // 사용 가능한 마일리지
+    /*테이블 단위로 세터가 적용되어있을 경우 얘만 제외시키거나
+    의도적으로 세터 안넣은거라고 명시적이게 표기 */
+    private int maxMileage = 0;
 
-    // (기본값 0, 비즈니스 메서드로만 관리)
+    // 최근 총 구매액 (기본값 0, 비즈니스 메서드로만 관리)
     @Column(nullable = false)
     @Setter(AccessLevel.NONE)
-    private int recentlyUsed = 0; // 최근 결제 금액
+    private int recentTotal = 0;
 
+    // Refresh Token 관계 설정 (1:1)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private RefreshToken auth;
+
+    // 주소 정보 (임베디드 타입)
+    @Setter
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "postalCode", column = @Column(name = "postalCode", nullable = false)),
-            @AttributeOverride(name = "address", column = @Column(name = "address", nullable = false)),
-            @AttributeOverride(name = "detailAddress", column = @Column(name = "detailAddress", nullable = false))
-    })
     private Address address;
 
-    /** 연관관계 설정 **/
-    // Order과의 관계 1:N
+    // 주문 정보 (1:N 관계)
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders = new ArrayList<>();
 
-    /** 생성자 및 비즈니스 로직 등등 **/
-    // 내부 생성자 메서드 -> 필수 값만으로도 객체 생성
-    private User(String providerId, String userName, Address address) {
-        this.providerId = providerId;
-        this.userName = userName;
-        this.address = address;
-        this.maxMileage = 0;
-        this.recentlyUsed = 0;
-    }
-
-    // 정적 팩토리 메서드 -> 객체 생성의 진입점
-    public static User create(String providerId, String userName, Address address) {
-        User user = new User(providerId, userName, address);
-        user.providerId = providerId;
-        user.userName = userName;
-        return user;
-    }
-
     // 주문 추가 메서드
     public void addOrder(Order order) {
-        this.orders.add(order);
+        orders.add(order);
         order.setUser(this);
     }
 
+    /**
+     * 도메인 내에서 처리 가능한 비즈니스 로직 또는 세터 대체 메서드
+     * 도메인 보호를 위해 유효성 검사도 해줍니당.
+     **/
     // 마일리지 사용
     public void useMileage(int mileage) {
-        if (mileage < 0) {
-            throw new IllegalArgumentException("사용할 마일리지는 0보다 커야 합니다.");
+        if(mileage < 0) {
+            throw  new IllegalArgumentException("사용할 마일리지는 0보다 커야 합니다.");
         }
-        if (this.maxMileage < mileage) {
+        if(this.maxMileage < mileage) {
             throw new IllegalArgumentException("마일리지가 부족합니다.");
         }
         this.maxMileage -= mileage;
@@ -98,12 +95,19 @@ public class User extends BaseEntity {
 
     // 총 결제 금액 업데이트
     public void updateRecentTotal(int amount) {
-        int newTotal = this.recentlyUsed + amount;
+        // 취소의 경우도 있어서 amount에 대한 유효성 검사는 따로 x
+        int newTotal = this.recentTotal + amount;
         if (newTotal < 0) {
             throw new IllegalArgumentException("총 결제 금액은 음수가 될 수 없습니다.");
         }
-        this.recentlyUsed = newTotal;
+        this.recentTotal = newTotal;
     }
+
+    // 주소 저장/수정 메서드 추가
+    public void updateAddress(Address address) {
+        this.address = address;
+    }
+
 }
 
 /*

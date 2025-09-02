@@ -10,7 +10,6 @@ import likelion13th.shop.login.auth.jwt.CustomUserDetails;
 import likelion13th.shop.login.auth.service.UserService;
 import likelion13th.shop.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +18,11 @@ import java.util.List;
 
 
 @Tag(name = "주문", description = "주문 관련 API 입니다.")
-@Slf4j
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
-    private final UserService userService;
 
     /** 주문 생성 **/
     @PostMapping
@@ -38,12 +35,11 @@ public class OrderController {
         return ApiResponse.onSuccess(SuccessCode.ORDER_CREATE_SUCCESS, newOrder);
     }
 
-
     /** 모든 주문 목록 조회 **/
     @GetMapping
     @Operation(summary = "모든 주문 조회", description = "로그인한 사용자의 모든 주문을 목록으로 조회합니다.")
     public ApiResponse<?> getAllOrders(
-            CustomUserDetails customUserDetails
+            @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
         List<OrderResponse> orders = orderService.getAllOrders(customUserDetails);
         // 주문이 없더라도 성공 응답 + 빈 리스트 반환
@@ -60,7 +56,7 @@ public class OrderController {
 
         orderService.cancelOrder(orderId);
 
-        return ApiResponse.onSuccess(SuccessCode.ORDER_CANCEL_SUCCESS, null);
+        return ApiResponse.onSuccess(SuccessCode.ORDER_CANCEL_SUCCESS,null);
 
     }
 

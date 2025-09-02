@@ -1,14 +1,12 @@
 package likelion13th.shop.service;
 
 import jakarta.transaction.Transactional;
-import likelion13th.shop.DTO.response.UserInfoResponse;
-import likelion13th.shop.DTO.response.UserMileageResponse;
+import likelion13th.shop.DTO.request.AddressRequest;
 import likelion13th.shop.DTO.response.AddressResponse;
 import likelion13th.shop.domain.Address;
 import likelion13th.shop.domain.User;
 import likelion13th.shop.global.api.ErrorCode;
-import likelion13th.shop.global.exception.GeneralException;
-import likelion13th.shop.login.auth.jwt.CustomUserDetails;
+import likelion13th.shop.global.exception.CustomException;
 import likelion13th.shop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,34 +16,32 @@ import org.springframework.stereotype.Service;
 public class UserAddressService{
     private final UserRepository userRepository;
 
-    /** 내 정보 조회 **/
+    // 사용자 주소 저장 (기본값 또는 변경)
     @Transactional
-    public UserInfoResponse getUserInfo (CustomUserDetails customUserDetails) {
-        User user = userRepository.findById(customUserDetails.getUserId()) // 유저 정보 조회
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_INFO_NOT_FOUND));
+    public AddressResponse saveAddress(String providerId, AddressRequest request) {
+        User user = userRepository.findByProviderId(providerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return UserInfoResponse.from(user);
+        // 사용자가 입력한 값이 없을 경우 기본 주소 사용
+        String zipcode = request.getZipcode();
+        String address = request.getAddress();
+        String detail = request.getAddressDetail();
+
+        // 새로운 주소 설정
+        Address newAddress = new Address(zipcode, address, detail);
+        user.updateAddress(newAddress); // User 엔티티에 주소 업데이트
+        userRepository.save(user); // 변경 사항 저장
+
+        return new AddressResponse(user.getAddress());
     }
 
-    /** 내 마일리지 조회 **/
-    @Transactional
-    public UserMileageResponse getUserMileage (CustomUserDetails customUserDetails) {
-        User user = userRepository.findById(customUserDetails.getUserId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_INFO_NOT_FOUND));
+    // 사용자 주소 조회 (기본값 -> 항공대로 제공)
+    @Transactional(readOnly = true)
+    public AddressResponse getAddress(String providerId) {
+        User user = userRepository.findByProviderId(providerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return UserMileageResponse.from(user);
-    }
-
-    /** 내 주소 조회 **/
-    @Transactional
-    public AddressResponse getUserAddress (CustomUserDetails customUserDetails) {
-        User user = userRepository.findById(customUserDetails.getUserId())
-                .orElseThrow(() -> new GeneralException(ErrorCode.USER_INFO_NOT_FOUND));
-
-        Address address = user.getAddress();
-        if (address == null) throw new GeneralException(ErrorCode.ADDRESS_NOT_FOUND);
-        return AddressResponse.from(user.getAddress());
-
+        return new AddressResponse(user.getAddress());
     }
 }
 

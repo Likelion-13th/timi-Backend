@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddressRequest {
     // 기본 주소
-    private Long addressId;
-    private String postalCode;
-    private String detailAddress;
+    private String zipcode; // 사용자가 변경 가능
+    private String address; // 사용자가 변경 가능
+    private String addressDetail; // 사용자가 변경 가능
 }
 
 /*

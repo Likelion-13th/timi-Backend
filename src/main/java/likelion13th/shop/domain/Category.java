@@ -1,7 +1,7 @@
 package likelion13th.shop.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import likelion13th.shop.domain.entity.BaseEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,36 +12,43 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "categories")
+@Table(name = "category")
 @NoArgsConstructor
-public class Category extends BaseEntity {
+public class Category {
 
     /** 필드 **/
-    @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "category_id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(AccessLevel.PRIVATE)
     private Long id;
 
-    @Column(nullable = false)
-    private String categoryName; // 카테고리 이름
+    @Column(name = "category_name", nullable = false)
+    private String name; // 카테고리 이름
 
     /** 연관관계 설정 **/
     // Item과의 관계 N:N
-    @ManyToMany (mappedBy = "categories")
+    @ManyToMany
+    @JsonIgnore //무한 루프 방지  (카테고리 내부에서 items 목록을 JSON 변환에서 제외)
+    @JoinTable(name = "category_item", //중간 테이블 자동으로 생성
+            joinColumns = @JoinColumn(name = "category_id"),
+            inverseJoinColumns = @JoinColumn(name = "item_id"))
     private List<Item> items = new ArrayList<>();
 
-    /** 생성자 및 비즈니스 로직 등등 **/
-    // 내부 생성자 메서드 -> 필수 값만으로도 객체 생성
-    private Category(String categoryName) {
-        this.categoryName = categoryName;
-    }
+    /** db에 직접 넣을 경우에는 필요하지 x **/
+    // 생성자로 기본 값 설정
+//    public Category(String name) {
+//        this.name = name;
+//    }
 
-    // 정적 팩토리 메서드 -> 객체 생성의 진입점
-    public static Category create(String categoryName) {
-        Category category = new Category(categoryName);
-        category.categoryName = categoryName;
-        return category;
-    }
+    //양방향 관계 설정
+//    public void addItem(Item item) {
+//        if (!this.items.contains(item)) {
+//            this.items.add(item);
+//            if (!item.getCategories().contains(this)) {
+//                item.getCategories().add(this);
+//            }
+//        }
+//    }
 
 }
 

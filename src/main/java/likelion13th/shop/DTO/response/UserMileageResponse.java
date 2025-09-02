@@ -1,21 +1,12 @@
 package likelion13th.shop.DTO.response;
 
-import likelion13th.shop.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class UserMileageResponse {
     private int maxMileage;
-
-    public static UserMileageResponse from(User user) {
-        return new UserMileageResponse(
-                user.getMaxMileage()
-        );
-    }
 }
 
 /*
