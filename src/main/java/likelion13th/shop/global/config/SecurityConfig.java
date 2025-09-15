@@ -52,12 +52,12 @@ public class SecurityConfig {
 
                                 "/categories/**",         // ✅ 로그인 없이 카테고리 조회 가능
                                 "/items/**"               // ✅ 로그인 없이 상품 조회 가능
-                        ).permitAll()
-                        .anyRequest().authenticated()
+                        ).permitAll() // 인증 없이 접근 가능한 경로
+                        .anyRequest().authenticated() // 나머지는 JWT가 있어야 접근 가능
                 )
                 // 🔹 세션 정책: STATELESS (JWT 기반)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // STATELESS: 모든 요청을 토큰으로 인증
 
                 // 🔹 OAuth2 로그인 설정 (UserService 연동)
                 .oauth2Login(oauth2 -> oauth2
@@ -81,8 +81,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
-                "http://sajang-dev.ap-northeast-2.elasticbeanstalk.com",
-                "https://likelionshop.netlify.app"
+                "https://timi-shop.netlify.app/"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
