@@ -7,7 +7,7 @@ import likelion13th.shop.domain.User;
 import likelion13th.shop.login.auth.dto.JwtDto;
 import likelion13th.shop.login.auth.jwt.CustomUserDetails;
 import likelion13th.shop.login.auth.service.JpaUserDetailsManager;
-import likelion13th.shop.login.service.UserService;
+import likelion13th.shop.login.auth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -37,8 +37,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // OAuth2UserServiceImpl에서 만든 attributes 사용
         DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
 
-        String providerId = (String) oAuth2User.getAttribute("provider_id");
-        String nickname = (String) oAuth2User.getAttribute("nickname");
+        String providerId = (String) oAuth2User.getAttributes().get("provider_id");
+        String nickname = (String) oAuth2User.getAttributes().get("nickname");
 
         if (!jpaUserDetailsManager.userExists(providerId)) { // 최초 로그인
             User newUser = User.builder()
@@ -69,7 +69,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 "https://timi-shop.netlify.app/",
                 "http://localhost:3000"
         );
-        if (frontendRedirectUri == null || authorizeUris.contains(frontendRedirectUri)) {
+        if (frontendRedirectUri != null || authorizeUris.contains(frontendRedirectUri)) {
             frontendRedirectUri = "https://timi-shop.netlify.app/";
         }
 

@@ -12,7 +12,7 @@ import likelion13th.shop.global.api.ErrorCode;
 import likelion13th.shop.global.api.SuccessCode;
 import likelion13th.shop.global.exception.GeneralException;
 import likelion13th.shop.login.auth.jwt.CustomUserDetails;
-import likelion13th.shop.login.service.UserService;
+import likelion13th.shop.login.auth.service.UserService;
 import likelion13th.shop.service.UserAddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
