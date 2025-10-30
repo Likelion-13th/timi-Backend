@@ -19,6 +19,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 
 public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
+
     private final UserRepository userRepository;
 
     @Override
@@ -42,7 +43,7 @@ public class OAuth2UserServiceImpl extends DefaultOAuth2UserService {
 
         return new DefaultOAuth2User(
                 // 인증 성공 시에 기본 권한 부여
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")),
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                 extendedAttributes,
                 "provider_id"
         );

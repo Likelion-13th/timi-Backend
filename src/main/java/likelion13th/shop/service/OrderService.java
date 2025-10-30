@@ -10,7 +10,7 @@ import likelion13th.shop.global.api.ErrorCode;
 import likelion13th.shop.global.constant.OrderStatus;
 import likelion13th.shop.global.exception.GeneralException;
 import likelion13th.shop.login.auth.jwt.CustomUserDetails;
-import likelion13th.shop.login.auth.service.UserService;
+import likelion13th.shop.login.service.UserService;
 import likelion13th.shop.repository.ItemRepository;
 import likelion13th.shop.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
