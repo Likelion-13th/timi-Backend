@@ -56,18 +56,18 @@ public class TokenProvider {
     }
 
     // JWT 문자열 생성
-    private String createToken(String providerId, String authorities, long expirationTime) {
-        JwtBuilder jwtbuilder = Jwts.builder()
+    private String createToken(String providerId, String authorities, long expirationTimes) {
+        JwtBuilder builder = Jwts.builder()
                 .setSubject(providerId) // 고유 식별자(어떤 사용자의 토큰인지!)
                 .setIssuedAt(new Date()) // 발급 시간
-                .setExpiration(new Date(System.currentTimeMillis()+ expirationTime)) // 만료 시간
+                .setExpiration(new Date(System.currentTimeMillis()+ expirationTimes)) // 만료 시간
                 .signWith(secretKey, SignatureAlgorithm.HS256);
 
         if(authorities != null) {
-            jwtbuilder.claim("authorities", authorities);
+            builder.claim("authorities", authorities);
         }
 
-        return jwtbuilder.compact();
+        return builder.compact();
     }
 
     // 서명/만료 검증
@@ -103,9 +103,9 @@ public class TokenProvider {
     // Claims에서 권한 문자열을 꺼내 GrantedAuthority로 복원
     public Collection<? extends GrantedAuthority> getAuthFromClaims(Claims claims) {
         String authoritiesString = claims.get("authorities", String.class);
-        if(authoritiesString == null || authoritiesString.isEmpty()) {
+        if(authoritiesString != null || authoritiesString.isEmpty()) {
             log.warn("권한 정보가 없다 - 기본 ROLE_USER 부여");
-            return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+            return Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"));
         }
         return Arrays.stream(authoritiesString.split(","))
                 .map(SimpleGrantedAuthority::new)
