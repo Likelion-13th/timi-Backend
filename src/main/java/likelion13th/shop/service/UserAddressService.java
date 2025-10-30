@@ -1,6 +1,7 @@
 package likelion13th.shop.service;
 
-import jakarta.transaction.Transactional;
+
+import org.springframework.transaction.annotation.Transactional;
 import likelion13th.shop.DTO.request.AddressRequest;
 import likelion13th.shop.DTO.response.AddressResponse;
 import likelion13th.shop.domain.Address;
