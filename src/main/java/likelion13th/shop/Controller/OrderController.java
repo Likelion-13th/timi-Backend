@@ -7,7 +7,6 @@ import likelion13th.shop.DTO.response.OrderResponse;
 import likelion13th.shop.global.api.ApiResponse;
 import likelion13th.shop.global.api.SuccessCode;
 import likelion13th.shop.login.auth.jwt.CustomUserDetails;
-import likelion13th.shop.login.auth.service.UserService;
 import likelion13th.shop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
