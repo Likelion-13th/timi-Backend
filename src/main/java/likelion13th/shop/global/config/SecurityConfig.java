@@ -55,6 +55,7 @@ public class SecurityConfig {
                         ).permitAll() // 인증 없이 접근 가능한 경로
                         .anyRequest().authenticated() // 나머지는 JWT가 있어야 접근 가능
                 )
+
                 // 🔹 세션 정책: STATELESS (JWT 기반)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // STATELESS: 모든 요청을 토큰으로 인증
