@@ -61,7 +61,8 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             Claims claims = tokenProvider.parseClaims(token);
 
             String providerId = claims.getSubject();
-            if(providerId == null || providerId.isEmpty()) {
+            if (providerId == null || providerId.isEmpty()) {
+                sendErrorResponse(response, ErrorCode.TOKEN_INVALID);
                 return;
             }
 

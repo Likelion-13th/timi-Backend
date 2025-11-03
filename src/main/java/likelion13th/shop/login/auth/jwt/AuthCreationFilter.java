@@ -28,7 +28,8 @@ public class AuthCreationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !"/users/reissue".equals(request.getRequestURI());
+        // /users/reissue가 아니면 필터 적용 안 함
+        return !"/users/reissue".equals(request.getServletPath());
     }
 
     @Override
