@@ -66,11 +66,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String frontendRedirectUri = request.getParameter("redirect_uri");
         List<String> authorizeUris = List.of(
-                "https://timi-shop.netlify.app/",
+                "https://timi-shop.netlify.app",
                 "http://localhost:3000"
         );
-        if (frontendRedirectUri == null || authorizeUris.contains(frontendRedirectUri)) {
-            frontendRedirectUri = "https://timi-shop.netlify.app/";
+        if (frontendRedirectUri == null || !authorizeUris.contains(frontendRedirectUri)) {
+            frontendRedirectUri = "https://timi-shop.netlify.app";
         }
 
         // redirect_uri로 accessToken을 쿼리 파라미터에 담아 리다이렉트
