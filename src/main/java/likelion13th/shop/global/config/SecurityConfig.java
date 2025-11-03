@@ -82,7 +82,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
                 "http://Sajang-dev-env.eba-vnmycbab.ap-northeast-2.elasticbeanstalk.com",
-                "https://timi-shop.netlify.app/"
+                "https://timi-shop.netlify.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
