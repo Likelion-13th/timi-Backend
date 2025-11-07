@@ -43,8 +43,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**",         // 🔑 Swagger
                                 "/v3/api-docs/**",
 
-                                "/users/reissue",         // 🔑 토큰 재발급
-                                "/users/logout",          // 🔑 로그아웃
+                                "/reissue",         // 🔑 토큰 재발급
+                                "/logout",          // 🔑 로그아웃
 
                                 "/token/**",              // 🔑 토큰 재발급 및 생성
                                 "/oauth2/**",             // 🟡 카카오 OAuth 리디렉션
