@@ -44,7 +44,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
 
                                 "/reissue",         // 🔑 토큰 재발급
-                                "/logout",          // 🔑 로그아웃
+                                "/users/logout",          // 🔑 로그아웃
 
                                 "/token/**",              // 🔑 토큰 재발급 및 생성
                                 "/oauth2/**",             // 🟡 카카오 OAuth 리디렉션
@@ -86,7 +86,7 @@ public class SecurityConfig {
                 "https://timi-shop.netlify.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type","Accept","Origin","X-Requested-With"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
