@@ -31,7 +31,7 @@ public class UserController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "요청 이상"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "유효하지 않음")
     })
-    @PostMapping("reissue")
+    @PostMapping("/reissue")
     public ApiResponse<JwtDto> reissue(HttpServletRequest request) {
         try {
             JwtDto jwt = userService.reissue(request);
