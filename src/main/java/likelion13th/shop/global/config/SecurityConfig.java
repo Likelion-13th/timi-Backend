@@ -1,6 +1,5 @@
 package likelion13th.shop.global.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import likelion13th.shop.login.auth.jwt.AuthCreationFilter;
 import likelion13th.shop.login.auth.jwt.JwtValidationFilter;
 import likelion13th.shop.login.auth.utils.OAuth2SuccessHandler;

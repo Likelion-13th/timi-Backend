@@ -33,7 +33,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
     @Override
     // reissue는 필터 거치지 않고 넘어가게
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return "/users/reissue".equals(request.getServletPath());
+        return "/reissue".equals(request.getServletPath());
     }
 
     // 인증하기

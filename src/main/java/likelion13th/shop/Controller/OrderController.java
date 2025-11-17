@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import likelion13th.shop.DTO.request.OrderCreateRequest;
 import likelion13th.shop.DTO.response.OrderResponse;
 import likelion13th.shop.global.api.ApiResponse;
+import likelion13th.shop.global.api.ErrorCode;
 import likelion13th.shop.global.api.SuccessCode;
 import likelion13th.shop.login.auth.jwt.CustomUserDetails;
 import likelion13th.shop.service.OrderService;
@@ -30,6 +31,11 @@ public class OrderController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody OrderCreateRequest request
     ) {
+        // null 체크 추가
+        if (customUserDetails == null) {
+            return ApiResponse.onFailure(ErrorCode.UNAUTHORIZED, null);
+        }
+
         OrderResponse newOrder = orderService.createOrder(request, customUserDetails);
         return ApiResponse.onSuccess(SuccessCode.ORDER_CREATE_SUCCESS, newOrder);
     }
@@ -40,6 +46,11 @@ public class OrderController {
     public ApiResponse<?> getAllOrders(
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
+        // null 체크 추가
+        if (customUserDetails == null) {
+            return ApiResponse.onFailure(ErrorCode.UNAUTHORIZED, null);
+        }
+
         List<OrderResponse> orders = orderService.getAllOrders(customUserDetails);
         // 주문이 없더라도 성공 응답 + 빈 리스트 반환
         if (orders.isEmpty()) {
@@ -51,10 +62,17 @@ public class OrderController {
     /** 주문 취소 **/
     @PutMapping("/{orderId}/cancel")
     @Operation(summary = "주문 취소", description = "로그인한 사용자의 주문을 취소합니다.")
-    public ApiResponse<?> cancelOrder(@PathVariable Long orderId) {
+    public ApiResponse<?> cancelOrder(
+            @PathVariable Long orderId,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails )
+            // 추가함
+    {
+        // null 체크 추가
+        if (customUserDetails == null) {
+            return ApiResponse.onFailure(ErrorCode.UNAUTHORIZED, null);
+        }
 
         orderService.cancelOrder(orderId);
-
         return ApiResponse.onSuccess(SuccessCode.ORDER_CANCEL_SUCCESS,null);
 
     }
