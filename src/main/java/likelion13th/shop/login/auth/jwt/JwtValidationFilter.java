@@ -51,8 +51,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            sendErrorResponse(response, ErrorCode.TOKEN_INVALID);
-            // filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
             return;
         }
 
