@@ -61,20 +61,6 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // STATELESS: 모든 요청을 토큰으로 인증
 
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authEx) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json;charset=UTF-8");
-                            // ErrorCode/ApiResponse 안 써도 되게 그냥 JSON 문자열로
-                            response.getWriter().write(
-                                    "{\"isSuccess\":false," +
-                                            "\"code\":\"UNAUTHORIZED\"," +
-                                            "\"message\":\"로그인이 필요합니다.\"," +
-                                            "\"result\":null}"
-                            );
-                        })
-                )
-
                 // 🔹 OAuth2 로그인 설정 (UserService 연동)
                 .oauth2Login(oauth2 -> oauth2
                         //.loginPage("/users/login")
