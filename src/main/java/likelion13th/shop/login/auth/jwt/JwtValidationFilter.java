@@ -33,7 +33,21 @@ public class JwtValidationFilter extends OncePerRequestFilter {
     @Override
     // reissue는 필터 거치지 않고 넘어가게
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return "/reissue".equals(request.getServletPath());
+        // 수정함.
+        String path = request.getServletPath();
+
+        return path.equals("/reissue") ||
+                path.startsWith("/health") ||
+                path.startsWith("/swagger-ui") ||
+                path.startsWith("/v3/api-docs") ||
+                path.startsWith("/users/logout") ||
+                path.startsWith("/token") ||
+                path.startsWith("/oauth2") ||
+                path.startsWith("/login/oauth2") ||
+                path.startsWith("/categories") ||
+                path.startsWith("/items");
+
+        // return "/reissue".equals(request.getServletPath());
     }
 
     // 인증하기
@@ -43,10 +57,6 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        // 수정함
-        String uri = request.getRequestURI();
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("[JWT] uri={}, authHeader={}", uri, authHeader);
 
         Authentication existing = SecurityContextHolder.getContext().getAuthentication();
         if(existing != null && existing.isAuthenticated() && !(existing instanceof AnonymousAuthenticationToken)) {
@@ -54,7 +64,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -64,8 +74,6 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
         try {
             Claims claims = tokenProvider.parseClaims(token);
-            // 수정함
-            log.info("[JWT] parsed claims subject={}", claims.getSubject());
 
             String providerId = claims.getSubject();
             if (providerId == null || providerId.isEmpty()) {
@@ -84,20 +92,15 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            // 수정함.
-            log.info("[JWT] set authentication for providerId={}", providerId);
-
             filterChain.doFilter(request, response);
         } catch(io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             // 잘못된 서명
             sendErrorResponse(response, ErrorCode.TOKEN_INVALID);
-
             // 수정함.
             log.warn("[JWT] invalid token", e);
         } catch(ExpiredJwtException e) {
             // 토큰 만료
             sendErrorResponse(response, ErrorCode.TOKEN_EXPIRED);
-
             // 수정함.
             log.warn("[JWT] token expired", e);
         } catch(UnsupportedJwtException e) {
