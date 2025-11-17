@@ -43,13 +43,18 @@ public class JwtValidationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
+        // 수정함
+        String uri = request.getRequestURI();
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        log.info("[JWT] uri={}, authHeader={}", uri, authHeader);
+
         Authentication existing = SecurityContextHolder.getContext().getAuthentication();
         if(existing != null && existing.isAuthenticated() && !(existing instanceof AnonymousAuthenticationToken)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        // String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -59,6 +64,8 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
         try {
             Claims claims = tokenProvider.parseClaims(token);
+            // 수정함
+            log.info("[JWT] parsed claims subject={}", claims.getSubject());
 
             String providerId = claims.getSubject();
             if (providerId == null || providerId.isEmpty()) {
