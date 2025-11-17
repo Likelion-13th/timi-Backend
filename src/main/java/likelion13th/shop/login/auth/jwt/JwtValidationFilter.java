@@ -84,13 +84,22 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
+            // 수정함.
+            log.info("[JWT] set authentication for providerId={}", providerId);
+
             filterChain.doFilter(request, response);
         } catch(io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             // 잘못된 서명
             sendErrorResponse(response, ErrorCode.TOKEN_INVALID);
+
+            // 수정함.
+            log.warn("[JWT] invalid token", e);
         } catch(ExpiredJwtException e) {
             // 토큰 만료
             sendErrorResponse(response, ErrorCode.TOKEN_EXPIRED);
+
+            // 수정함.
+            log.warn("[JWT] token expired", e);
         } catch(UnsupportedJwtException e) {
             // 지원하지 않는 형식의 토큰
             sendErrorResponse(response, ErrorCode.TOKEN_INVALID);
