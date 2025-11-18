@@ -53,7 +53,7 @@ public class SecurityConfig {
                                 "/categories/**",         // ✅ 로그인 없이 카테고리 조회 가능
                                 "/items/**" ,             // ✅ 로그인 없이 상품 조회 가능
                                 "/orders",
-                                "orders/** "
+                                "/orders/** "
                         ).permitAll() // 인증 없이 접근 가능한 경로
                         .anyRequest().authenticated() // 나머지는 JWT가 있어야 접근 가능
                 )
